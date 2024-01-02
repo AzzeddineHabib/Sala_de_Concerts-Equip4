@@ -1,10 +1,11 @@
 package src;
-
 import java.util.Scanner;
 
 public class Project4 {
+
+    static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
         boolean validOption = true;
         String dni = "";
 
@@ -304,7 +305,7 @@ public class Project4 {
             }
             System.out.println();
             int totalPrice = priceTicket + totalRecap;
-            System.out.println("The total price is "+ totalPrice +" €.");
+            System.out.println("The total price is " + totalPrice + " €.");
         }
 
         if (group) {
@@ -383,79 +384,21 @@ public class Project4 {
                 }
 
                 if (Clients) {
-                    System.out.println("What do you want to know?");
-                    System.out.println("0. Make a consult");
-                    System.out.println("1. Delete user");
-                    System.out.println("2. Exit");
-
-                    int clientManage = sc.nextInt();
-
-                    boolean consult = false;
-                    boolean delete = false;
+                    int clientManage = displayMenu();
 
                     switch (clientManage) {
                         case 0:
-                            consult = true;
+                            makeConsult();
                             break;
                         case 1:
-                            delete = true;
+                            deleteUser();
                             break;
                         case 2:
                             System.out.println("See you soon!");
                             break;
                     }
-                    if (consult) {
-                        System.out.println("Write the DNI: ");
-                        dni = sc.next();
-
-                        // Database simulation. In the future you can save here data.
-                        String[][] clients = {
-                                {"Name1", "DNI2", "Phone1"},
-                                {"Name2", "DNI2", "Phone2"},
-                                {"Name3", "DNI3", "Phone3"}};
-
-                        boolean found = false;
-
-                        for (int i = 0; i < clients.length; i++) {
-                            if (clients[i][1].equals(dni)) {
-                                found = true;
-                                System.out.println("Name: " + clients[i][0]);
-                                System.out.println("DNI: " + clients[i][1]);
-                                System.out.println("Phone number : " + clients[i][2]);
-                                break;
-                            }
-                        }
-
-                        if (!found) {
-                            System.out.println("That DNI is not registered.");
-                        }
-                    }
-                    if (delete) {
-                        System.out.println("Write the DNI from the user you want to delete: ");
-                        dni = sc.next();
-
-                        // Database simulation. In the future you can save here data.
-                        String[][] clientes = {
-                                {"Name1", "DNI2", "Phone1"},
-                                {"Name2", "DNI2", "Phone2"},
-                                {"Name3", "DNI3", "Phone3"}};
-
-                        boolean deleted = false;
-
-                        for (int i = 0; i < clientes.length; i++) {
-                            if (clientes[i][1].equals(dni)) {
-                                deleted = true;
-                                clientes[i] = null;
-                                System.out.println("The client with DNI "+ dni +" has been deleted");
-                                break;
-                            }
-                        }
-
-                        if (!deleted) {
-                            System.out.println("That DNI is not registered.");
-                        }
-                    }
                 }
+
 
                 if (Groups) {
                     System.out.println("What do you want to know?");
@@ -521,7 +464,7 @@ public class Project4 {
                             if (concerts[i][1].equals(nameGroup)) {
                                 deleted = true;
                                 concerts[i] = null;
-                                System.out.println("The concert of "+ nameGroup +" has been cancelled");
+                                System.out.println("The concert of " + nameGroup + " has been cancelled");
                                 break;
                             }
                         }
@@ -539,5 +482,72 @@ public class Project4 {
                 System.out.println("Coming soon...");
             }
         }
+
     }
+
+        private static int displayMenu() {
+            System.out.println("What do you want to know?");
+            System.out.println("0. Make a consult");
+            System.out.println("1. Delete user");
+            System.out.println("2. Exit");
+
+            return sc.nextInt();
+        }
+
+        private static void makeConsult() {
+            System.out.println("Write the DNI: ");
+            String dni = sc.next();
+
+            // Database simulation. In the future, you can save data here.
+            String[][] clients = {
+                    {"Name1", "DNI2", "Phone1"},
+                    {"Name2", "DNI2", "Phone2"},
+                    {"Name3", "DNI3", "Phone3"}};
+
+            boolean found = false;
+
+            for (int i = 0; i < clients.length; i++) {
+                if (clients[i][1].equals(dni)) {
+                    found = true;
+                    displayClientInfo(clients[i]);
+                    break;
+                }
+            }
+
+            if (!found) {
+                System.out.println("That DNI is not registered.");
+            }
+        }
+
+        private static void deleteUser() {
+            System.out.println("Write the DNI from the user you want to delete: ");
+            String dni = sc.next();
+
+            // Database simulation. In the future, you can save data here.
+            String[][] clients = {
+                    {"Name1", "DNI2", "Phone1"},
+                    {"Name2", "DNI2", "Phone2"},
+                    {"Name3", "DNI3", "Phone3"}};
+
+            boolean deleted = false;
+
+            for (int i = 0; i < clients.length; i++) {
+                if (clients[i][1].equals(dni)) {
+                    deleted = true;
+                    clients[i] = null;
+                    System.out.println("The client with DNI " + dni + " has been deleted");
+                    break;
+                }
+            }
+
+            if (!deleted) {
+                System.out.println("That DNI is not registered.");
+            }
+        }
+
+        private static void displayClientInfo(String[] client) {
+            System.out.println("Name: " + client[0]);
+            System.out.println("DNI: " + client[1]);
+            System.out.println("Phone number: " + client[2]);
+        }
 }
