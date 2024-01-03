@@ -340,12 +340,14 @@ public class Project4 {
             System.out.println("What position do you have?");
             System.out.println("0. Manager");
             System.out.println("1. Waiter");
-            System.out.println("2. Exit");
+            System.out.println("2. Other Worker");
+            System.out.println("3. Exit");
 
             int position = sc.nextInt();
 
             boolean Manager = false;
             boolean Waiter = false;
+            boolean OtherWorker = false;
 
             switch (position) {
                 case 0:
@@ -355,9 +357,13 @@ public class Project4 {
                     Waiter = true;
                     break;
                 case 2:
+                    OtherWorker = true;
+                    break;
+                case 3:
                     System.out.println("See you soon!");
                     break;
             }
+
 
             if (Manager) {
                 System.out.println();
@@ -481,9 +487,45 @@ public class Project4 {
             if (Waiter) {
                 System.out.println("Coming soon...");
             }
+
+            if (OtherWorker) {
+                System.out.println("Welcome, worker!");
+
+                // Introducción para otros trabajadores
+                System.out.println("Please provide the following information:");
+
+                System.out.println("Enter your name: ");
+                String workerName = sc.nextLine();
+
+                System.out.println("Enter your position: ");
+                String workerPosition = sc.nextLine();
+
+                // Recopilar información personal del trabajador
+                String workerAddress = getWorkerInfo("Enter your address: ");
+                String workerPhoneNumber = getWorkerInfo("Enter your phone number: ");
+                String workerStartDate = getWorkerInfo("Enter your start date (DD/MM/YYYY): ");
+
+                // Mostrar la información del trabajador
+                System.out.println("Thank you! Here is your information:");
+                displayWorkerInfo(workerName, workerPosition, workerAddress, workerPhoneNumber, workerStartDate);
+            }
+
         }
 
     }
+        private static String getWorkerInfo(String prompt) {
+            System.out.println(prompt);
+            return sc.nextLine();
+        }
+
+        private static void displayWorkerInfo(String name, String position, String address, String phoneNumber, String startDate) {
+            System.out.println("Name: " + name);
+            System.out.println("Position: " + position);
+            System.out.println("Address: " + address);
+            System.out.println("Phone Number: " + phoneNumber);
+            System.out.println("Start Date: " + startDate);
+        }
+
 
         private static int displayMenu() {
             System.out.println("What do you want to know?");
@@ -545,7 +587,7 @@ public class Project4 {
             }
         }
 
-        private static void displayClientInfo(String[] client) {
+        static void displayClientInfo(String[] client) {
             System.out.println("Name: " + client[0]);
             System.out.println("DNI: " + client[1]);
             System.out.println("Phone number: " + client[2]);
