@@ -1,6 +1,5 @@
 package src;
 import java.util.Scanner;
-import java.sql.*;
 
 public class ConcertHall {
 
@@ -66,57 +65,9 @@ public class ConcertHall {
                 "€\n1. VIP3 --> " + prices[1] + "€\n2. VIP2 --> " + prices[2] + "€\n3. VIP1 --> " + prices[3] + "€");
         return prices;
     }
-
-    private static int processDrinks(int drink) {
-        int totalRecap = 0;
-        if (drink == 0) {
-            boolean orderAgain = true;
-            while (orderAgain) {
-                String[] product = {"Cocktail", "Beer", "Soda", "Water"};
-                int[] drinks = new int[4];
-                int[] drinksPerClient = new int[drinks.length];
-                int codeDrink;
-                for (int i = 0; i < drinksPerClient.length; i++) {
-                    codeDrink = getIntInput("What do you want to drink?\n0. Cocktail\n1. Beer\n2. Soda\n3. Water", 0, 3);
-
-                    System.out.println("How many drinks do you want?");
-                    int numberDrinks = sc.nextInt();
-                    drinksPerClient[codeDrink] += numberDrinks;
-
-                    System.out.println("Do you want anything else to drink?\n0. Yes\n1. No");
-                    int moreDrinks = sc.nextInt();
-                    if (moreDrinks == 1) {
-                        break;
-                    }
-                }
-                displaySelectedDrinks(product, drinksPerClient);
-                int correctOrder = getIntInput("Is it correct?\n0. Yes\n1. No, order again", 0, 1);
-                if (correctOrder == 0) {
-                    orderAgain = false;
-                    totalRecap = calculateTotalPriceDrinks(drinksPerClient);
-                    System.out.println("The price of the drinks will be " + totalRecap + " €.");
-                }
-            }
-        }
-        return totalRecap;
-    }
-
-    private static void displaySelectedDrinks(String[] product, int[] drinksPerClient) {
-        System.out.println("You have chosen:");
-        for (int j = 0; j < drinksPerClient.length; j++) {
-            if (drinksPerClient[j] > 0) {
-                System.out.println(product[j] + ": " + drinksPerClient[j]);
-            }
-        }
-    }
-
-    private static int calculateTotalPriceDrinks(int[] drinksPerClient) {
-        int[] prices = {8, 3, 4, 2};
-        int totalRecap = 0;
-        for (int i = 0; i < drinksPerClient.length; i++) {
-            totalRecap += drinksPerClient[i] * prices[i];
-        }
-        return totalRecap;
+//DRINK REQUEST
+    static {
+        Drinks.DrinkRequest();
     }
 
     private static void processGroup() {
