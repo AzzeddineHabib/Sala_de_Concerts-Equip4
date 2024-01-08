@@ -3,9 +3,25 @@ package src;
 import java.util.Scanner;
 
 public class Drinks {
+    public static void DrinkRequest(){
+        boolean orderAgain = true;
+        if (DoYouWantaDrink() == 0) {
+            while (orderAgain) {
+                DrinksMenu();
+                showDrinks();
+                if (Drinks.confirmRequest() == 0) {
+                    orderAgain = false;
+                    Drinks.priceOfDrinks();
+                }
+            }
+        }
+
+
+        totalPrice();
+    }
     public static Scanner sc = new Scanner(System.in);
 
-    public static int DoYouWantaDrink(){
+    public static int DoYouWantaDrink() {
         System.out.println("\nDo you want a drink?");
         System.out.println("0. Yes");
         System.out.println("1. No");
@@ -42,7 +58,7 @@ public class Drinks {
         }
     }
 
-    public static void chooseDrinks(){
+    public static void chooseDrinks() {
         System.out.println("\nHow many drinks do you want?");
         int numberDrinks = sc.nextInt();
         switch (codeDrink) {
@@ -61,14 +77,14 @@ public class Drinks {
         }
     }
 
-    public static int addDrinks(){
+    public static int addDrinks() {
         System.out.println("\nDo you want anything else to drink?");
         System.out.println("0. Yes");
         System.out.println("1. No");
         return sc.nextInt();
     }
 
-    public static void showDrinks(){
+    public static void showDrinks() {
         System.out.println("You have chosen:");
         for (int j = 0; j < drinksPerClient.length; j++) {
             if (drinksPerClient[j] > 0) {
@@ -77,15 +93,16 @@ public class Drinks {
         }
     }
 
-    public static int confirmRequest(){
+    public static int confirmRequest() {
         System.out.println("\nIs it correct?");
         System.out.println("0. Yes");
         System.out.println("1. No, order again");
         return sc.nextInt();
     }
+
     public static int totalRecap = 0;
 
-    public static void priceOfDrinks(){
+    public static void priceOfDrinks() {
         for (int i = 0; i < totalPrices.length; i++) {
             totalPrices[i] = drinksPerClient[i] * prices[i];
             totalRecap += totalPrices[i]++;
@@ -95,7 +112,7 @@ public class Drinks {
 
     public static void totalPrice() {
         //priceTicket + Falta linkear con clase tickets para el total
-        int totalPrice =  totalRecap;
+        int totalPrice = totalRecap;
         System.out.println("\nThe total price is " + totalPrice + " €.");
     }
 
