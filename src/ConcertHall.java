@@ -1,5 +1,4 @@
 import java.util.Scanner;
-import java.sql.*;
 
 public class ConcertHall {
 
@@ -17,7 +16,6 @@ public class ConcertHall {
         } while (!validInput);
         return input;
     }
-
 
     public static String getStringInput(String prompt) {
         System.out.println(prompt);

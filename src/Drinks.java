@@ -15,8 +15,6 @@ public class Drinks {
         }
     }
     public static Scanner sc = new Scanner(System.in);
-
-    public static int doYouWantaDrink() {
         System.out.println("\nDo you want a drink?");
         System.out.println("0. Yes");
         System.out.println("1. No");
@@ -87,6 +85,7 @@ public class Drinks {
             }
         }
     }
+
     public static int confirmRequest() {
         System.out.println("\nIs it correct?");
         System.out.println("0. Yes");
@@ -103,8 +102,6 @@ public class Drinks {
         }
         System.out.println("The price of the drinks will be " + totalRecap + " €.");
     }
-
-
 
 }
 
