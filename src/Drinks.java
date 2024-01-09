@@ -1,13 +1,11 @@
-package src;
-
 import java.util.Scanner;
 
 public class Drinks {
-    public static void DrinkRequest(){
+    public static void drinkRequest(){
         boolean orderAgain = true;
-        if (DoYouWantaDrink() == 0) {
+        if (doYouWantaDrink() == 0) {
             while (orderAgain) {
-                DrinksMenu();
+                drinksMenu();
                 showDrinks();
                 if (Drinks.confirmRequest() == 0) {
                     orderAgain = false;
@@ -15,13 +13,8 @@ public class Drinks {
                 }
             }
         }
-
-
-        totalPrice();
     }
     public static Scanner sc = new Scanner(System.in);
-
-    public static int DoYouWantaDrink() {
         System.out.println("\nDo you want a drink?");
         System.out.println("0. Yes");
         System.out.println("1. No");
@@ -38,7 +31,7 @@ public class Drinks {
     public static int[] totalPrices = new int[drinksPerClient.length];
     public static int codeDrink;
 
-    public static void DrinksMenu() {
+    public static void drinksMenu() {
         for (int i = 0; i < drinksPerClient.length; i++) {
             do {
                 System.out.println("\n What do you want to drink?");
@@ -108,12 +101,6 @@ public class Drinks {
             totalRecap += totalPrices[i]++;
         }
         System.out.println("The price of the drinks will be " + totalRecap + " €.");
-    }
-
-    public static void totalPrice() {
-        //priceTicket + Falta linkear con clase tickets para el total
-        int totalPrice = totalRecap;
-        System.out.println("\nThe total price is " + totalPrice + " €.");
     }
 
 }
