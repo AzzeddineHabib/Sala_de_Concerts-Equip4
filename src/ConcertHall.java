@@ -4,19 +4,90 @@ import java.sql.*;
 
 public class ConcertHall {
 
-    static Scanner sc = new Scanner(System.in);
+    public static Scanner sc = new Scanner(System.in);
+    private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/concertHallDatabase";
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "concerthallE4";
+    public static Connection con;
+
+
+    private static void initializeDatabase() {
+        try (Connection con = DriverManager.getConnection(DATABASE_URL, USER, PASSWORD);
+             Statement stmt = con.createStatement()) {
+
+            String createClientsTable = "CREATE TABLE IF NOT EXISTS Clients (" +
+                    "client_id SERIAL PRIMARY KEY," +
+                    "DNI TEXT UNIQUE," +
+                    "first_name TEXT," +
+                    "last_name TEXT" +
+                    "phone_number INTEGER" +
+                    "email TEXT)";
+            stmt.execute(createClientsTable);
+
+            String createMusicalGroupsTable = "CREATE TABLE IF NOT EXISTS MusicalGroups (" +
+                    "group_id SERIAL PRIMARY KEY," +
+                    "group_name TEXT," +
+                    "members INTEGER," +
+                    "arrival_date DATE" +
+                    "duration INTEGER," +
+                    "email TEXT)";
+            stmt.execute(createMusicalGroupsTable);
+
+            String createOtherWorkerTable = "CREATE TABLE IF NOT EXISTS OtherWorker (" +
+                    "worker_id SERIAL PRIMARY KEY," +
+                    "worker_name TEXT," +
+                    "address TEXT," +
+                    "position TEXT," +
+                    "phone_number INTEGER," +
+                    "start_date DATE)";
+            stmt.execute(createOtherWorkerTable);
+
+            String createTicketPricesTable = "CREATE TABLE IF NOT EXISTS TicketsPrices (" +
+                    "ticket_price_Nº1 INTEGER," +
+                    "ticket_price_Nº2 INTEGER," +
+                    "ticket_price_Nº3 INTEGER)";
+            stmt.execute(createTicketPricesTable);
+
+            String createDrinksTable = "CREATE TABLE IF NOT EXISTS Drinks (" +
+                    "drink_id SERIAL PRIMARY KEY," +
+                    "drink_name TEXT," +
+                    "price INTEGER," +
+                    "FOREIGN KEY(prices) REFERENCES createTicketPricesTable(ticket_price_Nº1, ticket_price_Nº2, ticket_price_Nº3))";
+            stmt.execute(createDrinksTable);
+
+            String createConcertsTable = "CREATE TABLE IF NOT EXISTS Concerts (" +
+                    "concert_id SERIAL PRIMARY KEY," +
+                    "concert_name TEXT," +
+                    "concert_date DATE," +
+                    "duration INTEGER," +
+                    "email TEXT," +
+                    "location TEXT)";
+            stmt.execute(createConcertsTable);
+
+            // ResultSet rset= stmt.executeQuery("");
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     private static void processClient() {
-        String[] clientData = new String[3];
+        String[] clientData = new String[6];
 
-        System.out.println("Write your name: ");
-        clientData[0] = sc.next();
+        System.out.println("Introduce DNI: ");
+        clientData[1] = sc.nextLine();
 
-        System.out.println("Write your DNI: ");
-        clientData[1] = sc.next();
+        System.out.println("Introduce First Name: ");
+        clientData[2] = sc.nextLine();
 
-        System.out.println("Write your phone number: ");
-        clientData[2] = sc.next();
+        System.out.println("Introduce Last Name: ");
+        clientData[3] = sc.nextLine();
+
+        System.out.println("Introduce Phone Number: ");
+        clientData[4] = String.valueOf(sc.nextInt());
+
+        System.out.println("Introduce Email: ");
+        clientData[5] = sc.nextLine();
 
         int whichGroup = getIntInput("Which group do you want to see?\n0. Group1\n1. Group2\n2. Group3\n3. Exit", 0, 3);
         int[] prices = processTicketPrices(whichGroup);
@@ -29,6 +100,23 @@ public class ConcertHall {
 
         int totalPrice = priceTicket + totalRecap;
         System.out.println("The total price is " + totalPrice + " €.");
+
+        insertClientIntoDatabase(clientData);
+    }
+
+    private static void insertClientIntoDatabase(String[] clientData) {
+        try (PreparedStatement preparedStatement = con.prepareStatement(
+                "INSERT INTO clients (client_id, DNI, first_name, last_name, phone_number, email) VALUES (?, ?, ?, ?, ?, ?)")) {
+            preparedStatement.setString(1, clientData[0]);
+            preparedStatement.setString(2, clientData[1]);
+            preparedStatement.setString(3, clientData[2]);
+            preparedStatement.setString(4, clientData[3]);
+            preparedStatement.setString(5, clientData[4]);
+            preparedStatement.setString(6, clientData[5]);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static int getIntInput(String prompt, int min, int max) {
@@ -58,7 +146,6 @@ public class ConcertHall {
                 prices = new int[]{5, 15, 25, 35};
                 break;
             default:
-                sc.close();
                 System.out.println("See you soon!");
                 return new int[0];
         }
@@ -69,18 +156,23 @@ public class ConcertHall {
 
     private static int processDrinks(int drink) {
         int totalRecap = 0;
+
         if (drink == 0) {
             boolean orderAgain = true;
+
             while (orderAgain) {
                 String[] product = {"Cocktail", "Beer", "Soda", "Water"};
+
                 int[] drinks = new int[4];
                 int[] drinksPerClient = new int[drinks.length];
                 int codeDrink;
+
                 for (int i = 0; i < drinksPerClient.length; i++) {
                     codeDrink = getIntInput("What do you want to drink?\n0. Cocktail\n1. Beer\n2. Soda\n3. Water", 0, 3);
 
                     System.out.println("How many drinks do you want?");
                     int numberDrinks = sc.nextInt();
+
                     drinksPerClient[codeDrink] += numberDrinks;
 
                     System.out.println("Do you want anything else to drink?\n0. Yes\n1. No");
@@ -89,6 +181,7 @@ public class ConcertHall {
                         break;
                     }
                 }
+
                 displaySelectedDrinks(product, drinksPerClient);
                 int correctOrder = getIntInput("Is it correct?\n0. Yes\n1. No, order again", 0, 1);
                 if (correctOrder == 0) {
@@ -120,25 +213,41 @@ public class ConcertHall {
     }
 
     private static void processGroup() {
-        String[] groupData = new String[5];
+        String[] groupData = new String[6];
 
-        System.out.println("Write the name of the group:");
-        groupData[0] = sc.nextLine();
-
-        System.out.println("How many members are you?");
+        System.out.println("Introduce the Name of the group: ");
         groupData[1] = sc.nextLine();
 
-        System.out.println("How long are your concerts?");
+        System.out.println("Introduce how Many Members are: ");
         groupData[2] = sc.nextLine();
 
-        System.out.println("When do you want to come?");
+        System.out.println("Introduce when you will come to the Concert: ");
         groupData[3] = sc.nextLine();
 
-        System.out.println("Write an email to contact with you: ");
+        System.out.println("Introduce How long are the Concerts: ");
         groupData[4] = sc.nextLine();
 
-        System.out.println();
-        System.out.println("OK, we will send you an email.");
+        System.out.println("Introduce a contact email: ");
+        groupData[5] = sc.nextLine();
+
+        System.out.println("\n OK, we will send you an email of the status.");
+
+        insertGroupIntoDatabase(groupData);
+    }
+
+    private static void insertGroupIntoDatabase(String[] groupData) {
+        try (PreparedStatement prepstmt = con.prepareStatement(
+                "INSERT INTO groups (group_id, group_name, members, arrival_date, duration, email) VALUES (?, ?, ?, ?, ?, ?)")) {
+            prepstmt.setString(1, groupData[0]);
+            prepstmt.setString(2, groupData[1]);
+            prepstmt.setString(3, groupData[2]);
+            prepstmt.setString(4, groupData[3]);
+            prepstmt.setString(5, groupData[4]);
+            prepstmt.setString(6, groupData[5]);
+            prepstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static void processWorker() {
@@ -273,6 +382,8 @@ public class ConcertHall {
     }
 
     private static void processOtherWorker() {
+        String[] workerData = new String[7];
+
         System.out.println("Welcome, worker!");
 
         // Introduction for other workers
@@ -287,6 +398,24 @@ public class ConcertHall {
 
         System.out.println("Thank you! Here is your information:");
         displayWorkerInfo(workerName, workerPosition, workerAddress, workerPhoneNumber, workerStartDate);
+
+        insertWorkerIntoDatabase(workerData);
+    }
+
+    private static void insertWorkerIntoDatabase(String[] workerData) {
+        try (PreparedStatement prepstmt = con.prepareStatement(
+                "INSERT INTO workers (worker_id, worker_name, address, position, phone_number, start_date) VALUES (?, ?, ?, ?, ?, ?)")) {
+            prepstmt.setString(1, workerData[0]);
+            prepstmt.setString(2, workerData[1]);
+            prepstmt.setString(3, workerData[2]);
+            prepstmt.setString(4, workerData[3]);
+            prepstmt.setString(5, workerData[4]);
+            prepstmt.setString(6, workerData[5]);
+            prepstmt.setString(7, workerData[6]);
+            prepstmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private static String getStringInput(String prompt) {
@@ -295,6 +424,7 @@ public class ConcertHall {
     }
 
     private static void displayWorkerInfo(String name, String position, String address, String phoneNumber, String startDate) {
+        System.out.println("Worker ID: ");
         System.out.println("Name: " + name);
         System.out.println("Position: " + position);
         System.out.println("Address: " + address);
@@ -368,6 +498,7 @@ public class ConcertHall {
         System.out.println("Phone number: " + client[2]);
     }
     public static void main(String[] args) {
+        initializeDatabase();
         System.out.println("Welcome to the concert hall!");
 
         int introduction = getIntInput("Who are you?\n0. Client\n1. Group of music\n2. Worker\n3. Exit", 0, 3);
@@ -388,5 +519,3 @@ public class ConcertHall {
         }
     }
 }
-
-
